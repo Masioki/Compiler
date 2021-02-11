@@ -1,0 +1,157 @@
+
+import java_cup.runtime.*;
+import domain.enums.*;
+import domain.tree.*;
+
+parser code {:
+    String errorMessage = "";
+
+    public void syntax_error(Symbol s){
+         errorMessage = "Syntax error at line " + (s.left+1) + " column " + (s.right+1);
+    }
+
+    public void report_error(String message, Object info) {
+        if (info instanceof java_cup.runtime.Symbol) syntax_error((java_cup.runtime.Symbol) info);
+        else errorMessage = message;
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+    }
+:};
+
+terminal          PLUS, MINUS, DIVIDE, TIMES, MOD, OPEN, CLOSE, E, NE, L, G, LE, GE, ASSIGN, COMMA, SEMICOLON, COLON;
+terminal          DECLARE, BEGIN, END, IF, THEN, ELSE, ENDIF, WHILE, DO, ENDWHILE, REPEAT, UNTIL, FOR, FROM, TO, DOWNTO, ENDFOR, READ, WRITE;
+terminal Long     NUMBER;
+terminal String   PID;
+
+non terminal Program            program;
+non terminal Declaration        declarations;
+non terminal Commands           commands;
+non terminal Command            command;
+non terminal Expression         expression;
+non terminal Condition          condition;
+non terminal Variable           value, identifier;
+
+
+program ::=     DECLARE error END
+                {: System.out.println("Syntax error"); :}
+                |
+                DECLARE error BEGIN commands:cs END
+                {: System.out.println("Declaration error"); :}
+                |
+                DECLARE declarations:d BEGIN error END
+                {: System.out.println("Commands error"); :}
+                |
+                DECLARE declarations:d BEGIN commands:cs END
+                {: RESULT = new Program(d, cs); :}
+                |
+                BEGIN commands:cs END
+                {: RESULT = new Program(cs); :}
+                ;
+
+declarations ::= error COMMA:c
+                {: System.out.println("Declaration error"); :}
+                |
+                declarations:d COMMA PID:p
+                {: RESULT = d; d.addVar(new Variable(p)); :}
+                |
+                declarations:d COMMA PID:p OPEN NUMBER:n COLON NUMBER:m CLOSE
+                {: RESULT = d; d.addArray(new Array(p, n, m)); :}
+                |
+                PID:p
+                {: RESULT = new Declaration(); RESULT.addVar(new Variable(p)); :}
+                |
+                PID:p OPEN NUMBER:n COLON NUMBER:m CLOSE
+                {: RESULT = new Declaration(); RESULT.addArray(new Array(p, n, m)); :}
+                ;
+
+commands ::=    commands:cs command:c
+                {: RESULT = cs; cs.add(c); :}
+                |
+                command:c
+                {: RESULT = new Commands(); RESULT.add(c); :}
+                ;
+
+command ::=     identifier:i ASSIGN expression:e SEMICOLON
+                {: RESULT = new Assign(i, e); :}
+                |
+                IF condition:cond THEN commands:cs ELSE commands:css ENDIF
+                {: RESULT = new IfBlock(cond, cs, css); :}
+                |
+                IF condition:cond THEN commands:cs ENDIF
+                {: RESULT = new IfBlock(cond, cs); :}
+                |
+                WHILE condition:cond DO commands:cs ENDWHILE
+                {: RESULT = new WhileBlock(cond, cs, false); :}
+                |
+                REPEAT commands:cs UNTIL condition:cond SEMICOLON
+                {: RESULT = new WhileBlock(cond, cs, true); :}
+                |
+                FOR PID:p FROM value:v TO value:vv DO commands:cs ENDFOR
+                {: RESULT = new ForBlock(p, v, vv, false, cs); :}
+                |
+                FOR PID:p FROM value:v DOWNTO value:vv DO commands:cs ENDFOR
+                {: RESULT = new ForBlock(p, v, vv, true, cs); :}
+                |
+                READ identifier:i SEMICOLON
+                {: RESULT = new IOCommand(i, CommandType.READ); :}
+                |
+                WRITE value:v SEMICOLON
+                {: RESULT = new IOCommand(v, CommandType.WRITE); :}
+                ;
+
+expression ::=  value:v
+                {: RESULT = new Expression(v); :}
+                |
+                value:v PLUS value:vv
+                {: RESULT = new Expression(v, vv, ExpressionType.PLUS); :}
+                |
+                value:v MINUS value:vv
+                {: RESULT = new Expression(v, vv, ExpressionType.MINUS); :}
+                |
+                value:v TIMES value:vv
+                {: RESULT = new Expression(v, vv, ExpressionType.TIMES); :}
+                |
+                value:v DIVIDE value:vv
+                {: RESULT = new Expression(v, vv, ExpressionType.DIVIDE); :}
+                |
+                value:v MOD value:vv
+                {: RESULT = new Expression(v, vv, ExpressionType.MOD); :}
+                ;
+
+condition ::=   value:v E value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.E); :}
+                |
+                value:v NE value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.NE); :}
+                |
+                value:v L value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.L); :}
+                |
+                value:v G value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.G); :}
+                |
+                value:v LE value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.LE); :}
+                |
+                value:v GE value:vv
+                {: RESULT = new Condition(v, vv, ConditionType.GE); :}
+                ;
+
+value ::=       NUMBER:n
+                {: RESULT = new Variable(n); :}
+                |
+                identifier:i
+                {: RESULT = i; :}
+                ;
+
+identifier ::=  PID:p
+                {: RESULT = new Variable(p); :}
+                |
+                PID:p OPEN PID:q CLOSE
+                {: RESULT = new Variable(p, q); :}
+                |
+                PID:p OPEN NUMBER:n CLOSE
+                {: RESULT = new Variable(p, n); :}
+                ;
