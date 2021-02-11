@@ -34,10 +34,10 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
   ```
     * Array - t(x:y), where x <= y
     ```c
-    tab(10:20) [ declaration of array of size=11 indexed from 10 to 20 ]
-    tab(15) [ Ok ]
-    tab(21) [ Index out of bounds]
-    tab(a) [ if 10 <= a <= 20 Ok ]
+    tab(10:20); [ declaration of array of size=11 indexed from 10 to 20 ]
+    tab(15); [ Ok ]
+    tab(21); [ Index out of bounds]
+    tab(a); [ if 10 <= a <= 20 Ok ]
     ``` 
     * Constants - only integers >= 0
     ```c
