@@ -2,10 +2,21 @@
 
 Compiles to simplified assembly used by virtual machine with 6 registers a-f.
 
+### Build
+```bash
+# run from project
+mvn -q exec:java -Dexec.args="<infile> <outfile>"
+
+# build .jar
+mvn assembly:single
+# run from .jar
+java -jar Compiler.jar <infile> <outfile>
+```
+
 ## Grammar
 - Program structure
     - With declaration
-    ```c
+    ```java
     DECLARE
    	    a, b, t(10:20)
     BEGIN
@@ -13,13 +24,13 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     END
     ```
 	- Without declaration
-    ```c
+    ```java
     BEGIN
         ...
     END
     ```
 - Comments
-    ```c
+    ```java
     [ OK ]
   
     [ Also
@@ -30,20 +41,20 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```
 * Variables
     * Ordinary - [_a-z]+
-    ```c
+    ```java
     a   [ ok ]
     _a  [ ok ]
     A1  [ Wrong ]
   ```
     * Array - t(x:y), where x <= y
-    ```c
+    ```java
     tab(10:20);  [ declaration of array of size=11 indexed from 10 to 20 ]
     tab(15);     [ Ok ]
     tab(21);     [ Index out of bounds]
     tab(a);      [ if 10 <= a <= 20 Ok ]
     ``` 
     * Constants - only integers >= 0
-    ```c
+    ```java
     a := 0;                   [ Ok ]
     a := 1234567890987654321; [ Ok ]
   
@@ -52,7 +63,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```
   
 - IO
-    ```c
+    ```java
     READ a;  		[ Read from stdin to variable 'a' ]
     READ 123; 		[ Wrong ]
   
@@ -61,7 +72,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     WRITE 123;		[ Write constant to stdout ]
     ```
 - Expressions
-    ```c
+    ```java
     a := 10;
     a := b;
     a := 100 * 200;
@@ -82,7 +93,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```
 
 - Conditions
-    ```c
+    ```java
     a = b   [ Equals ]
     a != b  [ Not equal ]
     a < b   [ Less ]
@@ -92,7 +103,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```
 
 - If
-    ```c
+    ```java
     [ If ]
     IF a > b [ condition ] THEN 
         ...
@@ -107,7 +118,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```  
 - Loops
     - While
-        ```c
+        ```java
         [ While ]
         WHILE a > b [ condition ] DO
             ...
@@ -119,7 +130,7 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
         UNTIL a > b;
         ```  
     - For
-        ```c
+        ```java
         [ 'i' is local, not declared variable ]
         [ range (a - b or b - a) is calculated at the begining of loop and cannot be changed ]
         [ for variable range use WHILE ]
