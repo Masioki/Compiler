@@ -67,10 +67,10 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     a := 100 * 200;
     a := b * 10;
   
-    a := b + c;     [ add ]
-    a := b - c;     [ subtract ]
-    a := b * c;     [ multiply ]
-    a := b / c;     [ divide ]
+    a := b + c;     [ addition ]
+    a := b - c;     [ subtraction ]
+    a := b * c;     [ multiplication ]
+    a := b / c;     [ division ]
     a := b % c;     [ modulo ]
   
     a := b * c * d; [ Wrong ]
