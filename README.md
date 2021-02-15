@@ -46,8 +46,9 @@ Compiles to simplified assembly used by virtual machine with 6 registers a-f.
     ```c
     a := 0;                   [ Ok ]
     a := 1234567890987654321; [ Ok ]
-    a := 0;                   [ Ok ]
-    a := 1234567890987654321; [ Ok ]
+  
+    a := -5;                  [ Wrong ]
+    a := 123.456;             [ Wrong ]
     ```
   
 - IO
