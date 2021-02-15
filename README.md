@@ -2,7 +2,7 @@
 
 Compiles to simplified assembly used by virtual machine with 6 registers a-f.
 
-### Build
+## Build
 ```bash
 # run from project
 mvn -q exec:java -Dexec.args="<infile> <outfile>"
