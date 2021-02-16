@@ -31,18 +31,6 @@
             <version>1.18.16</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.0-alpha1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.0-alpha0</version>
-            <scope>runtime</scope>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -125,9 +113,12 @@
                             <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+<!--                    <descriptors>-->
+<!--                        <descriptor>src/assembly/assembly.xml</descriptor>-->
+<!--                    </descriptors>-->
+                                        <descriptorRefs>
+                                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                                        </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>

@@ -2,6 +2,12 @@
 
 Compiles to simplified assembly used by virtual machine with 6 registers a-f.
 
+## Tools  
+- Java 14
+- JFlex 1.8.2
+- Java Cup 11b
+
+
 ## Build
 ```bash
 # run from project

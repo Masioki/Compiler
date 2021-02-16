@@ -5,7 +5,6 @@ import domain.enums.ExpressionType;
 import domain.tree.*;
 import jflex.base.Pair;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +20,6 @@ import static domain.enums.ConditionType.*;
  * @author Tomasz Pach
  * @version Alpha
  */
-@Slf4j
 @Getter
 public class MemoryManager {
     private static final int LOAD_CONSTANT_AVG_COST = 21;
@@ -34,7 +32,7 @@ public class MemoryManager {
     MAIN
      */
     public void toAssembly(Program program) throws IOException {
-        log.debug("---------- " + OUT_FILE + " -----------------");
+//        log.debug("---------- " + OUT_FILE + " -----------------");
         Register register = new Register();
         List<String> result = allocMemory(program, register);
         result.addAll(commands(program.getCommands(), register));
@@ -76,8 +74,8 @@ public class MemoryManager {
             arrays.put(a, new Pair<>(memCounter, a.getStart()));
             memCounter += a.size();
         });
-        log.debug("MEMORY: " + variables);
-        log.debug("MEMORY-ARRAYS: " + arrays);
+//        log.debug("MEMORY: " + variables);
+//        log.debug("MEMORY-ARRAYS: " + arrays);
         return result;
     }
 
@@ -243,7 +241,7 @@ public class MemoryManager {
     IO
      */
     private List<String> parseRead(IOCommand io, Register register) {
-        log.debug("READ");
+//        log.debug("READ");
         Pair<String, List<String>> temp = loadPointerTo(io.getVar(), register);
         List<String> result = new ArrayList<>(temp.snd);
         result.add("GET " + temp.fst);
@@ -252,7 +250,7 @@ public class MemoryManager {
     }
 
     private List<String> parseWrite(IOCommand io, Register register) {
-        log.debug("WRITE");
+//        log.debug("WRITE");
         Pair<String, List<String>> temp = loadPointerTo(io.getVar(), register);
         List<String> result = new ArrayList<>(temp.snd);
         result.add("PUT " + temp.fst);
@@ -264,7 +262,7 @@ public class MemoryManager {
     ASSIGNMENTS
      */
     private List<String> parseAssign(Assign assign, Register register) {
-        log.debug("ASSIGNMENT");
+//        log.debug("ASSIGNMENT");
         Variable to = assign.getVar();
         Expression expression = assign.getExpression();
         Variable var1 = expression.getVar1();
@@ -276,7 +274,7 @@ public class MemoryManager {
     }
 
     private List<String> parseOneVarAssign(Variable to, Expression expression, Register register) {
-        log.debug("ASSIGNMENT ONE VAR");
+//        log.debug("ASSIGNMENT ONE VAR");
         List<String> result = new ArrayList<>();
         Variable var = expression.getVar1();
         if (var.equals(to)) return result;
@@ -296,7 +294,7 @@ public class MemoryManager {
     }
 
     private List<String> parseAssignWithConst(Variable to, Expression expression, Register register) {
-        log.debug("ASSIGNMENT WITH CONST");
+//        log.debug("ASSIGNMENT WITH CONST");
         Variable var1 = expression.getVar1();
         Variable var2 = expression.getVar2();
 
@@ -366,7 +364,7 @@ public class MemoryManager {
     }
 
     private List<String> parseTwoVarAssign(Variable to, Expression expression, Register register) {
-        log.debug("ASSIGNMENT TWO VAR");
+//        log.debug("ASSIGNMENT TWO VAR");
         Variable var1 = expression.getVar1();
         Variable var2 = expression.getVar2();
 
@@ -548,7 +546,7 @@ public class MemoryManager {
      * @return 0-TRUE, 1-FALSE on returned register
      */
     private Pair<String, List<String>> condition(Condition condition, Register register, String... notRemovable) {
-        log.debug("CONDITION");
+//        log.debug("CONDITION");
         List<String> result = new ArrayList<>();
 
         Variable var1 = condition.getVar1();
@@ -611,7 +609,7 @@ public class MemoryManager {
    IF
     */
     private List<String> parseIf(IfBlock ifBlock, Register register) {
-        log.debug("IF");
+//        log.debug("IF");
         Pair<String, List<String>> cond = condition(ifBlock.getCondition(), register);
         List<String> result = new ArrayList<>(cond.snd);
 
@@ -644,7 +642,7 @@ public class MemoryManager {
     WHILE
      */
     private List<String> parseWhile(WhileBlock whileBlock, Register register) {
-        log.debug("WHILE");
+//        log.debug("WHILE");
         List<String> result = new ArrayList<>();
         register.clear();
         //TODO: register management in loop
@@ -676,7 +674,7 @@ public class MemoryManager {
     FOR
      */
     private List<String> parseFor(ForBlock forBlock, Register register) {
-        log.debug("FOR");
+//        log.debug("FOR");
         List<String> result = new ArrayList<>();
         Commands commands = forBlock.getCommands();
         Variable iter = forBlock.getIterVar();
